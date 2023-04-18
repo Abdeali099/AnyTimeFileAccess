@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
 				Statement stmt = (Statement) con.createStatement();
 				ResultSet rs = stmt.executeQuery(query);
 				if (!rs.next()) {
-					response.sendRedirect("ErrorPage.html");
+					response.sendRedirect(".\\HelperPages\\error.html");
 				}
 
 				else {
