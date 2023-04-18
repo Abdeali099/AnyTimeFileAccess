@@ -75,7 +75,8 @@ public class LoginServlet extends HttpServlet {
 					rs.close();
 					
 					/* Redirect to MainPage */
-					response.sendRedirect(".\\MainPage\\MainPage.html");
+//					response.sendRedirect(".\\MainPage\\MainPage.html");
+					response.sendRedirect(".\\MainPage\\ViewPage.jsp");
 				}
 
 			}

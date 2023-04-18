@@ -85,7 +85,9 @@ public class SignupServlet extends HttpServlet
 				stmt.close();
 				
 				/* Redirect to MainPage */
-				response.sendRedirect(".\\MainPage\\MainPage.html");
+//				response.sendRedirect(".\\MainPage\\MainPage.html");
+				response.sendRedirect(".\\MainPage\\ViewPage.jsp");
+				
 			}
 			
 			
