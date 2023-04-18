@@ -53,10 +53,10 @@ public class SignupServlet extends HttpServlet
 			
 			//
 			// add cookies
-			Cookie uname = new Cookie("username",username);
-			Cookie pswd = new Cookie("password",password);
-			Cookie emailId = new Cookie("email",email);
-			Cookie phn = new Cookie("phone",phone);
+			Cookie uname = new Cookie("afa_username",username);
+			Cookie pswd = new Cookie("afa_password",password);
+			Cookie emailId = new Cookie("afa_email",email);
+			Cookie phn = new Cookie("afa_phone",phone);
 			
 			response.addCookie(uname);
 			response.addCookie(pswd);
@@ -72,9 +72,8 @@ public class SignupServlet extends HttpServlet
 			
 			if(rs.next())
 			{
-				response.sendRedirect(".\\HelperPages\\UserAlreadyExists.html");
 				stmt1.close();
-				con.close();
+				response.sendRedirect(".\\HelperPages\\UserAlreadyExists.html");
 			}
 			
 			else
@@ -84,7 +83,9 @@ public class SignupServlet extends HttpServlet
 				stmt.executeUpdate(query);
 				
 				stmt.close();
-				con.close();
+				
+				/* Redirect to MainPage */
+				response.sendRedirect(".\\MainPage\\MainPage.html");
 			}
 			
 			

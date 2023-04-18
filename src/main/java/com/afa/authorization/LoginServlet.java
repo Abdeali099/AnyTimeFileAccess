@@ -31,31 +31,51 @@ public class LoginServlet extends HttpServlet {
 			String email = request.getParameter("emailId");
 			String password = request.getParameter("pswd");
 
-			// add cookies
-			Cookie pswd = new Cookie("password", password);
-			Cookie emailId = new Cookie("email", email);
+			// add cookies;
+			Cookie pswd = new Cookie("afa_password",password);
+			Cookie emailId = new Cookie("afa_email",email);
 
 			response.addCookie(pswd);
 			response.addCookie(emailId);
 			
-
+			/* Here also add userName Cookie !!! */
+			
 			/* <-- Getting Connection -->*/
 			ConnectionToDatabase connectionToDatabase=new ConnectionToDatabase();
 			con = connectionToDatabase.getConnection();
 			
+			Statement stmt=null;
+			ResultSet rs =null;
+			
+			
 			if (con == null) {
 				System.out.print("\n In LogInServlet : Error connecting to database");
 			} else {
+				
 				String query = "select * from signup where email = '" + email + "' and password = '" + password + "'";
-				Statement stmt = (Statement) con.createStatement();
-				ResultSet rs = stmt.executeQuery(query);
+				 stmt = (Statement) con.createStatement();
+				 rs = stmt.executeQuery(query);
+				
+				
 				if (!rs.next()) {
+					stmt.close();
+					rs.close();
 					response.sendRedirect(".\\HelperPages\\error.html");
 				}
 
 				else {
-					// call main page (upload file page)
-					// out.print("user exists");
+					
+					/* Getting userName */
+					
+					String user_name=rs.getString("username");
+					Cookie uname = new Cookie("afa_username",user_name);
+					response.addCookie(uname);
+					
+					stmt.close();
+					rs.close();
+					
+					/* Redirect to MainPage */
+					response.sendRedirect(".\\MainPage\\MainPage.html");
 				}
 
 			}
