@@ -72,7 +72,7 @@ public class SignupServlet extends HttpServlet
 			
 			if(rs.next())
 			{
-				response.sendRedirect("Signup/UserAlreadyExists.html");
+				response.sendRedirect("..\\HelperPages\\UserAlreadyExists.html");
 				stmt1.close();
 				con.close();
 			}

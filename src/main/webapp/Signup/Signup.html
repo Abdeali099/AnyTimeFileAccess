@@ -39,7 +39,7 @@
       <div class="mb-3 row">
         <label for="username" class="col-sm-2 col-form-label label-font">Username</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="username" name="username" required>
+          <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z][a-zA-Z0-9]+" minlength="6" maxlength="15">
         </div>
       </div>
       <br><br>
@@ -53,7 +53,7 @@
       <div class="mb-3 row">
         <label for="phn" class="col-sm-2 col-form-label label-font">Phone </label>
         <div class="col-sm-10">
-          <input type="number" class="form-control" id="phn" name="phn" required>
+          <input type="text" class="form-control" id="phn" name="phn" required pattern="[6-9][0-9]+" minlength="10" maxlength="10">
         </div>
       </div>
 
@@ -62,7 +62,7 @@
       <div class="mb-3 row">
         <label for="inputPassword" class="col-sm-2 col-form-label label-font">Password</label>
         <div class="col-sm-10">
-          <input type="password" class="form-control" id="inputPassword" name="pswd" required>
+          <input type="password" class="form-control" id="inputPassword" name="pswd" required pattern="[a-zA-Z][a-zA-Z0-9@&_]+" minlength="6" maxlength="15">
         </div>
       </div>
 
