@@ -60,7 +60,7 @@ public class ConnectionToDatabase {
 			 url = prop.getProperty("url");
 			 username = prop.getProperty("userName");
 			 password = prop.getProperty("password");
-			 
+		
 		} catch (Exception exception) {
 			System.out.println("=> Error at fetching Props : " + exception);
 		}
@@ -73,6 +73,8 @@ public class ConnectionToDatabase {
 		} catch (Exception exception) {
 			System.out.println("=> Error at Creating connection : " + exception);
 		}
+		
+		
 		
 		
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import jakarta.servlet.http.Cookie;
@@ -65,14 +66,30 @@ public class SignupServlet extends HttpServlet
 			
 			
 			
+			String query1 = "select * from signup where email = '"+email+"'";
+			Statement stmt1 = (Statement) con.createStatement();
+			ResultSet rs = stmt1.executeQuery(query1);
 			
-			Statement stmt = con.createStatement();
-			String query = "insert into signup values('"+username+"', '"+ email+"','"+phone+"' , '"+ password+"')";
-			stmt.executeUpdate(query);
+			if(rs.next())
+			{
+				response.sendRedirect("Signup/UserAlreadyExists.html");
+				stmt1.close();
+				con.close();
+			}
+			
+			else
+			{
+				Statement stmt = con.createStatement();
+				String query = "insert into signup values('"+username+"', '"+ email+"','"+phone+"' , '"+ password+"')";
+				stmt.executeUpdate(query);
+				
+				stmt.close();
+				con.close();
+			}
 			
 			
-			stmt.close();
-			con.close();
+			
+			
 			
 		}
 		catch(Exception e)
