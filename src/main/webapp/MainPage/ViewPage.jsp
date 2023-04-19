@@ -102,8 +102,30 @@
 
 				<div class="card">
 
-					<img src=<%=resultSet.getString("url") %> class="card-img-top"
+					<%  
+						/* Cheking file is pdf or not  */
+						
+						String fileUrl=resultSet.getString("url");
+						
+						System.out.print("\n => url : " + fileUrl);
+						
+						if(fileUrl.endsWith(".pdf")){
+							
+					 %>
+
+					<iframe src=<%=resultSet.getString("url") %> class="card-img-top"></iframe>
+
+					<% 
+						}
+						
+						else{
+							
+					%>
+
+			<img src=<%=resultSet.getString("url") %> class="card-img-top"
 						alt="...">
+
+					<% } %>
 
 					<div class="card-body">
 
@@ -113,8 +135,6 @@
 
 						<div class="d-grid gap-2">
 
-						<!--suppress HtmlUnknownTarget -->
-						
 							<a download="w3logo" target="_blank"
 								href=<%=resultSet.getString("url") %> type="button"
 								class="btn btn-primary"> <i class="fa-solid fa-download"></i>
