@@ -28,6 +28,15 @@
 <script src="https://kit.fontawesome.com/31ab84d251.js"
 	crossorigin="anonymous"></script>
 
+<!-- Link to Jquery JS -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<!-- Link to Cookie :  Jquery JS -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+
 <!-- Custom styles -->
 
 <link rel="stylesheet" href="MainPage.css">
@@ -48,7 +57,7 @@
 			<div class="navbar-text ms-auto">
 
 				<i class="fa-solid fa-user"></i> <span class="me-3" id="user_name">User
-					Name</span> <i class="fa-solid fa-right-from-bracket"></i>
+					Name</span> <i id="logout_icon" class="fa-solid fa-right-from-bracket"></i>
 			</div>
 
 		</div>
@@ -122,7 +131,7 @@
 							
 					%>
 
-			<img src=<%=resultSet.getString("url") %> class="card-img-top"
+					<img src=<%=resultSet.getString("url") %> class="card-img-top"
 						alt="...">
 
 					<% } %>
@@ -187,31 +196,96 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js"></script>
 
-	<!-- Link to Jquery JS -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
 	<script>
 
-        let span_user_name = document.getElementById("user_name");
+        /* -----  User define functions -----*/
 
-        console.log(span_user_name);
         
-        let user_name = getCookie("afa_username");
-
-        console.log(user_name);
-
-        span_user_name.innerText = user_name;
-
-
         function getCookie(name) {
             let cookie = {};
             document.cookie.split(';').forEach(function (el) {
                 let [k, v] = el.split('=');
                 cookie[k.trim()] = v;
             })
+
             return cookie[name];
         }
+
+        /* ------------------------------------ */
+
+
+        /* Checking User is Logged in or Not !! */
+
+        const HOST = "http://localhost:"
+        const PORT = "8090";
+        let URL = HOST + PORT + "/AnytimeFileAccess/login.html"
+
+        /* Refernce of html */
+        let span_user_name = document.getElementById("user_name");
+        let user_name = getCookie("afa_username");
+
+        /* Checking Cookie */
+
+        if (user_name == undefined) {
+
+            /* Step: Redirecct to login page */
+ 
+             window.location.href = URL;
+
+        }
+
+        else {
+            span_user_name.innerText = user_name;
+        }
+
+
+        /* ---- Logout Logic ---- */
+
+
+        /* Step 1 : Icon clicked */
+
+        $(document).ready(function () {
+            
+            $("#logout_icon").click(function (event) {
+
+                /* Step 2  : Remove all Cookies of AFA */
+
+                $.each($.cookie(), function (key, value) {
+
+                    let keyString = "" + key;
+
+                    if (keyString.startsWith("afa")) {
+
+                        $.removeCookie(key);
+
+                    }
+
+                    console.log("Key : ", key, " Value : " + value);
+
+                });
+
+                console.log("All cookies have been removed.");
+                
+                /* Step 3 : Using JSP Closing connection !! */
+
+                <%
+               
+                System.out.print("I am in JS");
+                
+                try{
+                	connection.close();
+                }catch(Exception e){
+                	 System.out.print("Error at closing connection : " + e);
+                }
+                
+                %>
+
+                /* Step 4 : Redirect to login page */
+
+                 window.location.href = URL;
+                
+            });
+        });
 
     </script>
 

@@ -50,3 +50,10 @@
     font-size: 2rem;
     line-height: 2.7rem;
 }
+
+
+/* My Css */
+
+#logout_icon{
+cursor: pointer;
+}
