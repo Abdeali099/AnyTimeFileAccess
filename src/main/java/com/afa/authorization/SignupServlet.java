@@ -1,103 +1,174 @@
 package com.afa.authorization;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import com.afa.dbms.*;
 
 @SuppressWarnings("serial")
-public class SignupServlet extends HttpServlet
-{
-	Connection con=null;
-	@SuppressWarnings("static-access")
-	public void init()
-	{
-		try
-		{
-			/* <-- Getting Connection -->*/
-			ConnectionToDatabase connectionToDatabase=new ConnectionToDatabase();
-			con = connectionToDatabase.getConnection();
-			
-			if(con == null)
-			{
-				System.out.print("\n Error connecting to database");
-			}
-		}
-		catch(Exception e)
-		{
-			System.out.print("\n In init method of SignUpServlet : "+e.getMessage());
-		}
-	}
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException
-	{
-		try
-		{
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			
-			// get details of user
-			
-			String username = request.getParameter("username");
-			String email = request.getParameter("emailId");
-			String password = request.getParameter("pswd");
-			String phone = request.getParameter("phn");
-			
-			//
-			// add cookies
-			Cookie uname = new Cookie("afa_username",username);
-			Cookie pswd = new Cookie("afa_password",password);
-			Cookie emailId = new Cookie("afa_email",email);
-			Cookie phn = new Cookie("afa_phone",phone);
-			
-			response.addCookie(uname);
-			response.addCookie(pswd);
-			response.addCookie(emailId);
-			response.addCookie(phn);
-			//
-			
-			
-			
-			String query1 = "select * from signup where email = '"+email+"'";
-			Statement stmt1 = (Statement) con.createStatement();
-			ResultSet rs = stmt1.executeQuery(query1);
-			
-			if(rs.next())
-			{
-				stmt1.close();
-				response.sendRedirect(".\\HelperPages\\UserAlreadyExists.html");
-			}
-			
-			else
-			{
-				Statement stmt = con.createStatement();
-				String query = "insert into signup values('"+username+"', '"+ email+"','"+phone+"' , '"+ password+"')";
-				stmt.executeUpdate(query);
-				
-				stmt.close();
-				
-				/* Redirect to MainPage */
-//				response.sendRedirect(".\\MainPage\\MainPage.html");
-				response.sendRedirect(".\\MainPage\\ViewPage.jsp");
-				
-			}
-			
-			
-			
-			
-			
-		}
-		catch(Exception e)
-		{
-			System.out.print("\n Inside SignUpServlet class - Exception occurred : "+e.getMessage());
-		}
-	}
+public class SignupServlet extends HttpServlet {
+
+    @SuppressWarnings("static-access")
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        /* <-- Global Objects ---> */
+
+        Connection connection = null;
+        RequestDispatcher requestDispatcher = null;
+        PreparedStatement psForEmailValidation = null, psForStoreData = null;
+        ResultSet rsForEmailValidation = null;
+        HttpSession session = null;
+
+        /* <-- Global variables --> */
+
+        String userEmail = "", userPassword = "", userName = "", userPhone = "";
+
+        try {
+            /* <--- get details from Signup.jsp ---> */
+
+            userName = request.getParameter("afa_username");
+            userEmail = request.getParameter("afa_email");
+            userPhone = request.getParameter("afa_phone");
+            userPassword = request.getParameter("afa_password");
+
+            /* <-- Getting Connection --> */
+            ConnectionToDatabase connectionToDatabase = new ConnectionToDatabase();
+            connection = connectionToDatabase.getConnection();
+
+            if (connection == null) {
+
+                System.out.print("\n=> Error In SignUpServlet database connection ");
+
+                /* <-- Keep It to Signup Page --> */
+
+                request.setAttribute("status", "databaseError");
+                requestDispatcher = request.getRequestDispatcher("Signup.jsp");
+                requestDispatcher.forward(request, response);
+            }
+
+            else {
+
+                /* <-- Checking user is already exist or not : duplicate email case --> */
+
+                String queryForMailValidation = "select * from signup where email = ? ;";
+
+                psForEmailValidation = connection.prepareStatement(queryForMailValidation);
+                rsForEmailValidation = psForEmailValidation.executeQuery();
+
+                /* <-- Email Id already in used --> */
+
+                if (rsForEmailValidation.next()) {
+                    psForEmailValidation.close();
+                    rsForEmailValidation.close();
+                    connection.close(); /* New Connection will established */
+
+                    request.setAttribute("status", "failed");
+                    requestDispatcher = request.getRequestDispatcher("Signup.jsp");
+                    requestDispatcher.forward(request, response);
+                }
+
+                /* <-- True new user--> */
+
+                else {
+                    psForEmailValidation.close();
+                    rsForEmailValidation.close();
+
+                    /* <--- Details are Store to database ---> */
+
+                    String queryForStoreData = "insert into signup values(?,?,?,?); ";
+
+                    psForStoreData = connection.prepareStatement(queryForStoreData);
+
+                    psForStoreData.setString(1, userName);
+                    psForStoreData.setString(2, userEmail);
+                    psForStoreData.setString(3, userPhone);
+                    psForStoreData.setString(4, userPassword);
+
+                    int rowCount = psForStoreData.executeUpdate();
+
+                    /* <-- Successfully Added --> */
+
+                    if (rowCount > 0) {
+                        if (psForStoreData != null) {
+                            psForStoreData.close();
+                        }
+
+                        session = request.getSession();
+                        session.setAttribute("afa_username", userName);
+                        session.setAttribute("afa_email", userEmail);
+
+                        request.setAttribute("status", "success");
+                        requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
+                        requestDispatcher.forward(request, response);
+                    }
+
+                    /* <-- Failure --> */
+
+                    else {
+                        if (psForStoreData != null) {
+                            psForStoreData.close();
+                        }
+
+                        connection.close(); /* New Connection will established */
+
+                        request.setAttribute("status", "failed");
+                        requestDispatcher = request.getRequestDispatcher("Signup.jsp");
+                        requestDispatcher.forward(request, response);
+
+                    }
+
+                }
+
+            }
+
+        } catch (Exception e) {
+
+            System.out.print("\n => Error at Inside SignupServlet : " + e);
+
+            try {
+
+                if (connection != null) {
+                    connection.close(); /* New Connection will generated */
+                }
+
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+            request.setAttribute("status", "failed");
+            requestDispatcher = request.getRequestDispatcher("Signup.jsp");
+            requestDispatcher.forward(request, response);
+
+        } finally {
+
+            try {
+
+                if (psForEmailValidation != null) {
+                    psForEmailValidation.close();
+                }
+
+                if (psForStoreData != null) {
+                    psForStoreData.close();
+                }
+
+                if (rsForEmailValidation != null) {
+                    rsForEmailValidation.close();
+                }
+
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+    }
 }

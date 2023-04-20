@@ -1,5 +1,6 @@
 <!-- Importing Files -->
 
+<%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="com.afa.dbms.ConnectionToDatabase"%>
@@ -7,6 +8,99 @@
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+
+<!-- If user is Not Logged in send back it to login page -->
+
+<%
+	
+String userNamecheck=(String)session.getAttribute("afa_username");
+
+System.out.print("\n => user name :  " + userNamecheck);
+
+	if (session.getAttribute("afa_username") == null) 
+	{
+	  response.sendRedirect("Login.jsp");
+	}
+
+%>
+
+<!-- If user is Logged in fetched All its data -->
+
+<%
+
+     /* <--- Global Objects --->  */
+     
+      	Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+     
+     /* <--- Global Variable --->  */
+     
+     String userName="",userEmail="",queryToFetchAllFile="";
+     
+     
+     /* <--- Establishing Connection with database --->  */
+     
+     /* Fetched userName and userEmail from session */
+     
+     userName=(String)session.getAttribute("afa_username");
+     userEmail=(String)session.getAttribute("afa_useremail");
+     
+     if( userName==null || userEmail==null || userName.isEmpty() || userEmail.isEmpty()){
+    	
+    	 response.sendRedirect("../login.html");
+    
+     }// Main 'if' closed
+     
+     else{
+
+    	 try{
+    		 
+    	/* Getting connection */
+    		 
+        connection = ConnectionToDatabase.getConnection();   
+        	 
+        /* Prepare Query */
+        
+        queryToFetchAllFile="SELECT * FROM filesDetails WHERE useremail= ? ;";
+       	preparedStatement=connection.prepareStatement(queryToFetchAllFile);
+       	preparedStatement.setString(1, userEmail);
+       	
+       	/* Fire Query */
+       	
+       	resultSet=preparedStatement.executeQuery();
+       	
+       	/* No data avialable */
+       	if(!resultSet.next()){
+       		
+       	}
+       	
+       	/* Data avialable */
+       	else{
+       		
+       	}
+       	
+       	
+    		 
+    	 }
+    	 catch (Exception exception) {
+ 			System.out.println("\n => Error at Database Connection : " + exception);
+ 		}
+ 		finally {
+ 			
+ 			if (preparedStatement != null) {
+ 				preparedStatement.close();
+ 			}
+ 			
+ 			if (resultSet != null) {
+ 				resultSet.close();
+ 			}
+ 		}
+    	 
+    	 
+     } // Main 'else' closed
+
+%>
 
 
 
@@ -74,78 +168,77 @@
 
 		<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
 
-			<% 
-		/* <--- Database Connection --> */
-		System.out.println("\n => I reach here -- 1");
-	
-		
-		Connection connection=null;
-		Statement statement=null;
-		ResultSet resultSet=null;
-		
-		try{
-		System.out.println("\n => I reach here -- 2");
-			
-		connection=ConnectionToDatabase.getConnection();
-		statement=connection.createStatement();
-		
-		resultSet = statement.executeQuery("SELECT * FROM userfile ");
-		
-		System.out.println("\n => I reach here -- 3 \n => Rs : ");
-		
-		System.out.println(resultSet);
-		
-		/* No File Saved  */
-		if(resultSet==null){
+			<%
+			/* <--- Database Connection --> */
+			System.out.println("\n => I reach here -- 1");
+
+		//	Connection connection = null;
+			Statement statement = null;
+		//	ResultSet resultSet = null;
+
+			try {
+				System.out.println("\n => I reach here -- 2");
+
+				connection = ConnectionToDatabase.getConnection();
+				statement = connection.createStatement();
+
+				resultSet = statement.executeQuery("SELECT * FROM userfile ");
+
+				System.out.println("\n => I reach here -- 3 \n => Rs : ");
+
+				System.out.println(resultSet);
+
+				/* No File Saved  */
+				if (resultSet == null) {
 			%>
 			<h1 style="color: red;">No data avilable</h1>
 			<%
-		}
-		
-		else{
-			
-			while(resultSet.next()){
-				%>
+			}
+
+			else {
+
+			while (resultSet.next()) {
+			%>
 
 			<div class="col">
 
 				<div class="card">
 
-					<%  
-						/* Cheking file is pdf or not  */
-						
-						String fileUrl=resultSet.getString("url");
-						
-						System.out.print("\n => url : " + fileUrl);
-						
-						if(fileUrl.endsWith(".pdf")){
-							
-					 %>
+					<%
+					/* Cheking file is pdf or not  */
 
-					<iframe src=<%=resultSet.getString("url") %> class="card-img-top"></iframe>
+					String fileUrl = resultSet.getString("url");
 
-					<% 
-						}
-						
-						else{
-							
+					System.out.print("\n => url : " + fileUrl);
+
+					if (fileUrl.endsWith(".pdf")) {
 					%>
 
-					<img src=<%=resultSet.getString("url") %> class="card-img-top"
+					<iframe src=<%=resultSet.getString("url")%> class="card-img-top"></iframe>
+
+					<%
+					}
+
+					else {
+					%>
+
+					<img src=<%=resultSet.getString("url")%> class="card-img-top"
 						alt="...">
 
-					<% } %>
+					<%
+					}
+					%>
 
 					<div class="card-body">
 
-						<h5 class="card-title"><%=resultSet.getString("filename") %></h5>
+						<h5 class="card-title"><%=resultSet.getString("filename")%></h5>
 
-						<p class="card-text"><%=resultSet.getString(3) %></p>
+						<p class="card-text"><%=resultSet.getString(3)%></p>
 
 						<div class="d-grid gap-2">
 
 							<a download="w3logo" target="_blank"
-								href=<%=resultSet.getString("url") %> type="button"
+								href=<%=resultSet.getString("url")%> type="button"
 								class="btn btn-primary"> <i class="fa-solid fa-download"></i>
 								&nbsp; Download
 							</a>
@@ -162,28 +255,24 @@
 
 			</div>
 
-			<% 
+			<%
 			}
-			
-		}
-		
-	}
-		catch(Exception exception){
+
+			}
+
+			} catch (Exception exception) {
 			System.out.println("\n => Error at Database Connection : " + exception);
-		}
-		
-		finally{
-			if(statement!=null){
-				statement.close();
 			}
-			if(resultSet!=null){
-				resultSet.close();
+
+			finally {
+			if (statement != null) {
+			statement.close();
 			}
-		}
-
-		
-
-%>
+			if (resultSet != null) {
+			resultSet.close();
+			}
+			}
+			%>
 		</div>
 
 	</div>
@@ -195,99 +284,6 @@
 	<!-- Link to Bootstrap JS -->
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js"></script>
-
-	<script>
-
-        /* -----  User define functions -----*/
-
-        
-        function getCookie(name) {
-            let cookie = {};
-            document.cookie.split(';').forEach(function (el) {
-                let [k, v] = el.split('=');
-                cookie[k.trim()] = v;
-            })
-
-            return cookie[name];
-        }
-
-        /* ------------------------------------ */
-
-
-        /* Checking User is Logged in or Not !! */
-
-        const HOST = "http://localhost:"
-        const PORT = "8090";
-        let URL = HOST + PORT + "/AnytimeFileAccess/login.html"
-
-        /* Refernce of html */
-        let span_user_name = document.getElementById("user_name");
-        let user_name = getCookie("afa_username");
-
-        /* Checking Cookie */
-
-        if (user_name == undefined) {
-
-            /* Step: Redirecct to login page */
- 
-             window.location.href = URL;
-
-        }
-
-        else {
-            span_user_name.innerText = user_name;
-        }
-
-
-        /* ---- Logout Logic ---- */
-
-
-        /* Step 1 : Icon clicked */
-
-        $(document).ready(function () {
-            
-            $("#logout_icon").click(function (event) {
-
-                /* Step 2  : Remove all Cookies of AFA */
-
-                $.each($.cookie(), function (key, value) {
-
-                    let keyString = "" + key;
-
-                    if (keyString.startsWith("afa")) {
-
-                        $.removeCookie(key);
-
-                    }
-
-                    console.log("Key : ", key, " Value : " + value);
-
-                });
-
-                console.log("All cookies have been removed.");
-                
-                /* Step 3 : Using JSP Closing connection !! */
-
-                <%
-               
-                System.out.print("I am in JS");
-                
-                try{
-                	connection.close();
-                }catch(Exception e){
-                	 System.out.print("Error at closing connection : " + e);
-                }
-                
-                %>
-
-                /* Step 4 : Redirect to login page */
-
-                 window.location.href = URL;
-                
-            });
-        });
-
-    </script>
 
 </body>
 
