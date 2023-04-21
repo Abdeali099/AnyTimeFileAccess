@@ -21,7 +21,9 @@ System.out.print("\n => user name :  " + loggedInUserName);
 
 	if (loggedInUserName == null || loggedInUserName.isEmpty()) 
 	{
-	  response.sendRedirect("../Login.jsp");
+		System.out.println("=> I am in if name");
+	  // response.sendRedirect("../Login.jsp");
+	  response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
 	  return;
 	}
 
@@ -47,11 +49,11 @@ System.out.print("\n => user name :  " + loggedInUserName);
      /* <--- Establishing Connection with database --->  */
      
      /* Fetched loggedInUserEmail from session */
-      loggedInUserEmail=(String)session.getAttribute("afa_loggedInUserEmail");
+      loggedInUserEmail=(String)session.getAttribute("afa_useremail");
      
      if(loggedInUserEmail==null || loggedInUserEmail.isEmpty()){
-    	
-    	 response.sendRedirect("../Login.jsp");
+    	System.out.println("=> I am in if email");
+    	 response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
     
      }// Main 'if' closed
      
@@ -65,7 +67,7 @@ System.out.print("\n => user name :  " + loggedInUserName);
         	 
         /* Prepare Query */
         
-        queryToFetchAllFile="SELECT * FROM files_Details WHERE = ? ;";
+        queryToFetchAllFile="SELECT * FROM files_Details WHERE owner = ? ;";
        	preparedStatement=connection.prepareStatement(queryToFetchAllFile);
        	preparedStatement.setString(1, loggedInUserEmail);
        	
@@ -130,6 +132,7 @@ System.out.print("\n => user name :  " + loggedInUserName);
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
 
 <meta charset="UTF-8">
@@ -149,10 +152,73 @@ System.out.print("\n => user name :  " + loggedInUserName);
 <!-- Link to Cookie :  Jquery JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
-<!-- Custom styles -->
-<link rel="stylesheet" href="./MainPage.css">
-
 </head>
+
+<style>
+
+/* Style for the top section */
+.navbar {
+    background-color: #007bff;
+}
+
+.navbar-brand {
+    color: #fff;
+    font-weight: bold;
+}
+
+.navbar-text {
+    color: #fff;
+}
+
+.logout-icon {
+    color: #fff;
+}
+
+/* Style for the grid layout */
+.card {
+    margin-bottom: 1rem;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.card-text {
+    margin-bottom: 0.5rem;
+}
+
+/* Style for the fixed button */
+.fixed-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3rem;
+    height: 3rem;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 2rem;
+    line-height: 2.7rem;
+}
+
+
+/* My Css */
+
+#logout_icon{
+cursor: pointer;
+}
+
+
+</style>
+
 
 <body>
 
@@ -210,16 +276,22 @@ System.out.print("\n => user name :  " + loggedInUserName);
 
 			else {
 		
-			collectionOfFileData.forEach(fileData -> {
+			/* Error */
+			// collectionOfFileData.forEach(fileData -> {
 				
+				for(int i=0;i<collectionOfFileData.size();i++){
+				
+					/* Getting Object */
+					fileDataModal=collectionOfFileData.get(i);
+					
 				/* Varible to show in Grid/Preview */	
 				String previewId="",previewUrl="",previewFileName="",previewFileDesc="";
 				
 				/* Getting all preview Data */		
-				 previewId = ""+fileData.getFileId(); 
-				 previewUrl = fileData.getUrlOfFile();
-				 previewFileName = fileData.getFileName();
-				 previewFileDesc = fileData.getDescOfFile();
+				 previewId = ""+fileDataModal.getFileId(); 
+				 previewUrl = fileDataModal.getUrlOfFile();
+				 previewFileName = fileDataModal.getFileName();
+				 previewFileDesc = fileDataModal.getDescOfFile();
 				
 			%>
 				<!-- End JSP : 2 -->
@@ -295,13 +367,14 @@ System.out.print("\n => user name :  " + loggedInUserName);
 	<!-- Start JSP : 6 -->
 
 	<%
+				}
 			
-			}); /* forEach is closed */
+			// Error : }); /* forEach is closed */
 			
 		} /* else closed : show data in grid */
 
 	} catch (Exception exception) {
-		System.out.println("\n => Error at Database Connection : " + exception);
+		System.out.println("\n => Error at  Grid : " + exception);
 	}
 
 	finally {
