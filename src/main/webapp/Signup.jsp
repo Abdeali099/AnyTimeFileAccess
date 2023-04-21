@@ -11,11 +11,11 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
     <style>
 
@@ -39,7 +39,7 @@
 <body>
 
     <!-- hidden input field for checking status -->
-    <input type="hidden" id="status" value=<%= request.getAttribute(" status") %> >
+    <input type="hidden" id="status" value=<%= request.getAttribute("status") %> >
 
     <div class="container bs-example">
 
@@ -49,7 +49,7 @@
 
         <br><br>
 
-        <form action="SignupServlet" method="POST">
+        <form action="SignupServlet" method="POST" id="signupFORM">
 
             <div class="mb-3 row">
             
@@ -116,19 +116,26 @@
 
 </body>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" href="alert/dist/sweetalert.css">
+
 	
 
 	<script>
+	
+	/* When Form is submitted signupFORM */
+	
+	 $(document).ready(function () {
+         $('#loginFORM').submit(function (event) {
+           //  event.preventDefault();                 
+     	});
+     });
 	
 	let status = document.getElementById("status").value;
 	
 	console.log("STATUS : "+ status); 
   	
-	if(status == "success"){
+	/* if(status == "success"){
 		swal("Congrats", "Account Created Successfully", "success");
-	}
+	} */
 	
   	if(status == "failed")
   	{

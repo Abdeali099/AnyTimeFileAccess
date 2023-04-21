@@ -96,8 +96,10 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("afa_useremail", userEmail);
 
                     /* Redirect to MainPage */
-                    request.setAttribute("status", "success");
-
+                    
+                    /*  !!! Not Working !!
+                    request.setAttribute("status", "success");  */
+                    
                     requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
                     requestDispatcher.forward(request, response);
 

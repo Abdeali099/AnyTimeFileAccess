@@ -61,6 +61,7 @@ public class SignupServlet extends HttpServlet {
                 String queryForMailValidation = "select * from signup where email = ? ;";
 
                 psForEmailValidation = connection.prepareStatement(queryForMailValidation);
+                psForEmailValidation.setString(1, userEmail);
                 rsForEmailValidation = psForEmailValidation.executeQuery();
 
                 /* <-- Email Id already in used --> */
@@ -83,7 +84,7 @@ public class SignupServlet extends HttpServlet {
 
                     /* <--- Details are Store to database ---> */
 
-                    String queryForStoreData = "insert into signup values(?,?,?,?); ";
+                    String queryForStoreData = "insert into signup values (?,?,?,?) ;";
 
                     psForStoreData = connection.prepareStatement(queryForStoreData);
 
@@ -105,9 +106,11 @@ public class SignupServlet extends HttpServlet {
                         session.setAttribute("afa_username", userName);
                         session.setAttribute("afa_email", userEmail);
 
-                        request.setAttribute("status", "success");
+                        /*  !!! Not Working !!
+                        request.setAttribute("status", "success");  */
                         requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
                         requestDispatcher.forward(request, response);
+                        
                     }
 
                     /* <-- Failure --> */

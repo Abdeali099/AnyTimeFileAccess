@@ -14,6 +14,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
     <style>
         .bs-example {
@@ -91,19 +93,23 @@
 
 </body>
 
-<!-- Alert Library  -->
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" href="alert/dist/sweetalert.css">
-	
-
 	<script>
+	
+	
+	/* When Form is submitted */
+	
+	    $(document).ready(function () {
+            $('#loginFORM').submit(function (event) {
+                 // event.preventDefault();                 
+        	});
+        });
+	
 	
 	let status = document.getElementById("status").value;
 	
-	if(status == "success"){
+	/* if(status == "success"){
 		swal("Congrats", "Loged-In successfully", "success");
-	}
+	} */
   	
   	if(status == "failed")
   	{
