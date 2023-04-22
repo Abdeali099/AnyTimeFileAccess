@@ -145,7 +145,9 @@
   	if(status == "databaseError"){
   		swal("Error 500", "Internal server error", "error");
   	}
-  	
+  
 	</script>
+	
+	
 
 </html>

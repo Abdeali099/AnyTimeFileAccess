@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
 
             else {
 
-                String preparedQuery = "select * from signup where email = ? and password = ? ;";
+                String preparedQuery = "select * from user_details where email = ? and password = ? ;";
                 preparedStatement = connection.prepareStatement(preparedQuery);
                 preparedStatement.setString(1, userEmail);
                 preparedStatement.setString(2, userPassword);
@@ -100,6 +100,12 @@ public class LoginServlet extends HttpServlet {
                     /*  !!! Not Working !!
                     request.setAttribute("status", "success");  */
                     
+                    /* Trying to Prevent user to It Can't get Login Page after Redirect */
+					/*
+					 * response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+					 * response.setHeader("Pragma", "no-cache");
+					 *  response.setHeader("Expires", "0");
+					 */
                     requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
                     requestDispatcher.forward(request, response);
 
@@ -122,6 +128,7 @@ public class LoginServlet extends HttpServlet {
                 e1.printStackTrace();
             }
 
+            
             request.setAttribute("status", "failed");
             requestDispatcher = request.getRequestDispatcher("Login.jsp");
             requestDispatcher.forward(request, response);

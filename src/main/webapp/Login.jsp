@@ -95,15 +95,7 @@
 
 	<script>
 	
-	
-	/* When Form is submitted */
-	
-	    $(document).ready(function () {
-            $('#loginFORM').submit(function (event) {
-                 // event.preventDefault();                 
-        	});
-        });
-	
+
 	
 	let status = document.getElementById("status").value;
 	
@@ -121,6 +113,10 @@
   	}
   	
 	</script>
+	<!-- 
+	<script>
+    window.history.pushState(null, "", window.location.href);
+	</script> -->
 
 
 </html>

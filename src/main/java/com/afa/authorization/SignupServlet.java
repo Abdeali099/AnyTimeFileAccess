@@ -58,7 +58,7 @@ public class SignupServlet extends HttpServlet {
 
                 /* <-- Checking user is already exist or not : duplicate email case --> */
 
-                String queryForMailValidation = "select * from signup where email = ? ;";
+                String queryForMailValidation = "select * from user_details where email = ? ;";
 
                 psForEmailValidation = connection.prepareStatement(queryForMailValidation);
                 psForEmailValidation.setString(1, userEmail);
@@ -78,13 +78,13 @@ public class SignupServlet extends HttpServlet {
 
                 /* <-- True new user--> */
 
-                else {
+                else {	
                     psForEmailValidation.close();
                     rsForEmailValidation.close();
 
                     /* <--- Details are Store to database ---> */
 
-                    String queryForStoreData = "insert into signup values (?,?,?,?) ;";
+                    String queryForStoreData = "insert into user_details values (?,?,?,?) ;";
 
                     psForStoreData = connection.prepareStatement(queryForStoreData);
 
@@ -104,7 +104,7 @@ public class SignupServlet extends HttpServlet {
 
                         session = request.getSession();
                         session.setAttribute("afa_username", userName);
-                        session.setAttribute("afa_email", userEmail);
+                        session.setAttribute("afa_useremail", userEmail);
 
                         /*  !!! Not Working !!
                         request.setAttribute("status", "success");  */

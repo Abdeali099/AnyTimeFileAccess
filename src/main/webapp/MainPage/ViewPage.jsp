@@ -17,12 +17,8 @@
 
 String loggedInUserName=(String)session.getAttribute("afa_username");
 
-System.out.print("\n => user name :  " + loggedInUserName);
-
 	if (loggedInUserName == null || loggedInUserName.isEmpty()) 
 	{
-		System.out.println("=> I am in if name");
-	  // response.sendRedirect("../Login.jsp");
 	  response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
 	  return;
 	}
@@ -52,7 +48,7 @@ System.out.print("\n => user name :  " + loggedInUserName);
       loggedInUserEmail=(String)session.getAttribute("afa_useremail");
      
      if(loggedInUserEmail==null || loggedInUserEmail.isEmpty()){
-    	System.out.println("=> I am in if email");
+    	
     	 response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
     
      }// Main 'if' closed
@@ -74,14 +70,13 @@ System.out.print("\n => user name :  " + loggedInUserName);
        	/* Fire Query */
        	resultSet=preparedStatement.executeQuery();
        	
-       	/* Only if data avialable : .first() set to first row and return 'true' / 'false' */
+       	collectionOfFileData=new ArrayList<>();
        	
       /* Temp vriable  */
       int fileId=0;
 	  String ownerOfFile="",fileName="",fileSize="",categoryOfFile="",urlOfFile="",dateCreated="",dateModified="",descOfFile="",dateExpiray="";
-	   			
-       	if (resultSet.first())
-       	{
+
+	  
        		while(resultSet.next()){
        			
        		/* Fetching data from resultset */
@@ -93,7 +88,7 @@ System.out.print("\n => user name :  " + loggedInUserName);
     		urlOfFile =resultSet.getString("url");
     		dateCreated = resultSet.getString("date_created");
     		dateModified =resultSet.getString("date_modified");
-    		descOfFile = resultSet.getString("desc");
+    		descOfFile = resultSet.getString("description");
     		dateExpiray = resultSet.getString("expiry_date");
        		
        		/* Initilize Modal Object */ 		
@@ -103,9 +98,7 @@ System.out.print("\n => user name :  " + loggedInUserName);
        		/* Adding object to Arraylist */
        		collectionOfFileData.add(fileDataModal);
        		
-       		}
-		}
-       	       	
+       		}       	       	
     		 
     	 }
     	 catch (Exception exception) {
@@ -216,6 +209,41 @@ System.out.print("\n => user name :  " + loggedInUserName);
 cursor: pointer;
 }
 
+a{
+color:white;
+text-decoration:none;
+}
+
+/* No data div Css  */
+
+.DivNoData {
+  margin-top: 50px;
+}
+
+.UL_steps {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.step {
+  margin-bottom: 10px;
+}
+
+#noData-card{
+  border: none;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#noData-card_body {
+  padding: 30px;
+}
+
+@media only screen and (max-width: 767px) {
+  #noData-card_body {
+    padding: 20px;
+  }
+}
+
 
 </style>
 
@@ -228,16 +256,20 @@ cursor: pointer;
 
 		<div class="container-fluid">
 
-			<a class="navbar-brand">
+			<span class="navbar-brand">
 			<!-- Here add mini Image / logo Of AFA  -->
 			<i class="fa-solid fa-circle-h"></i>
 				&nbsp; AnyTimeFileAcees
-			</a>
+			</span>
 
 			<div class="navbar-text ms-auto">
 				<i class="fa-solid fa-user"></i> 
 				<span class="me-3" id="user_name"> <%=loggedInUserName %> </span> 
+				
+				<a href="http://localhost:8090/AnytimeFileAccess/LogoutServlet" style="text-decoration:none">
 				<i id="logout_icon" class="fa-solid fa-right-from-bracket"></i>
+				</a>
+				
 			</div>
 
 		</div>
@@ -261,13 +293,53 @@ cursor: pointer;
 			try {
 				
 				/* No File Saved  */
-				if (collectionOfFileData == null) {
+				if (collectionOfFileData == null || collectionOfFileData.isEmpty()) {
 					
 			%>
 			
 			<!-- End JSP : 1 -->
 			
-			<h1 style="color: red;">No data avilable</h1>
+			<!-- <h1 style="color: red;">No data avilable</h1>  -->
+			
+			<div class="DivNoData container">
+                
+                <h3 style="text-align: center">Hello <span>
+                        <%=loggedInUserName %>
+                    </span></h3>
+
+                <div class="row justify-content-center">
+                    
+                    <div>
+                        
+                        <div id="noData-card" class="card">
+                            
+                            <div id="noData-card_body" class="card-body">
+                                
+                                <ul style="list-style-type: square"	 class="UL_steps">
+                                    
+                                    <li class="step">You haven't uploaded any file</li>
+                                    <li class="step">To upload file follow given Steps</li>
+                                    
+                                    <ol start="1" type="1">
+                                    
+                                        <li class="step">Click on '+' icon located at Bottom-Right</li>
+                                        <li class="step">Fill Details Of the Form</li>
+                                        <li class="step">Click on Upload Button</li>
+                                    </ol>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            
+            </div>
+			
 			
 			<!-- Start JSP : 2 -->
 			<%
@@ -276,8 +348,7 @@ cursor: pointer;
 
 			else {
 		
-			/* Error */
-			// collectionOfFileData.forEach(fileData -> {
+				/* Iterate collection and set dtails to HTML code */
 				
 				for(int i=0;i<collectionOfFileData.size();i++){
 				
@@ -305,9 +376,7 @@ cursor: pointer;
 					<%
 					
 					/* Cheking file is pdf or not  */
-
-					System.out.print("\n => url : " + previewUrl);
-
+					
 					if (previewUrl.endsWith(".pdf")) {
 						
 					%>
@@ -368,9 +437,7 @@ cursor: pointer;
 
 	<%
 				}
-			
-			// Error : }); /* forEach is closed */
-			
+				
 		} /* else closed : show data in grid */
 
 	} catch (Exception exception) {
@@ -397,12 +464,17 @@ cursor: pointer;
 	</div>
 
 	<!-- Fixed button section -->
-	<a href="#" style="text-decoration: none;" class="fixed-button"><i
-		class="fa-solid fa-plus"></i></a>
+	<a href="#" style="text-decoration: none;" class="fixed-button">
+	<i class="fa-solid fa-plus"></i>
+	</a>
 
 	<!-- Link to Bootstrap JS -->
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js"></script>
+
+<!-- <script>
+    window.history.pushState(null, "", window.location.href);
+</script> -->
 
 </body>
 
