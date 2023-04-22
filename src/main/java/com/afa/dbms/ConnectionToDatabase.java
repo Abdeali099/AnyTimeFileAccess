@@ -69,7 +69,7 @@ public class ConnectionToDatabase {
 		
 		try {
 			connection = DriverManager.getConnection(url, username, password);	
-			System.out.println("Connection : " + connection);
+			
 		} catch (Exception exception) {
 			System.out.println("=> Error at Creating connection : " + exception);
 		}
