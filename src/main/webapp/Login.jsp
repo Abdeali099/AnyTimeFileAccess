@@ -37,7 +37,6 @@
 <body>
 
 <!-- hidden input field for checking status -->
-
 	<input type="hidden" id="status" value=<%=request.getAttribute("status")%>>
 
     <div class="container bs-example">

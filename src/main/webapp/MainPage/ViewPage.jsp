@@ -19,7 +19,7 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
 
 	if (loggedInUserName == null || loggedInUserName.isEmpty()) 
 	{
-	  response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
+	  response.sendRedirect("../AnytimeFileAccess/Login.jsp");
 	  return;
 	}
 
@@ -49,7 +49,7 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
      
      if(loggedInUserEmail==null || loggedInUserEmail.isEmpty()){
     	
-    	 response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");
+    	 response.sendRedirect("../AnytimeFileAccess/Login.jsp");
     
      }// Main 'if' closed
      
@@ -142,8 +142,9 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
 <!-- Link to Jquery JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-<!-- Link to Cookie :  Jquery JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<!-- Link to Sweet Alert  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
 
 </head>
 
@@ -196,10 +197,10 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
     height: 3rem;
     background-color: #007bff;
     color: #fff;
-    border-radius: 50%;
     text-align: center;
     font-size: 2rem;
     line-height: 2.7rem;
+    border-color: steelblue;
 }
 
 
@@ -249,6 +250,10 @@ text-decoration:none;
 
 
 <body>
+
+
+<!-- hidden input field for checking status -->
+	<input type="hidden" id="status" value=<%=request.getAttribute("statusOfViewPage")%>>
 
 	<!-- Top section : NavBar -->
 
@@ -464,18 +469,173 @@ text-decoration:none;
 	</div>
 
 	<!-- Fixed button section -->
-	<a href="#" style="text-decoration: none;" class="fixed-button">
-	<i class="fa-solid fa-plus"></i>
-	</a>
+	
+	<button type="button"  class="fixed-button"
+    data-bs-toggle="modal" data-bs-target="#uploadModal" data-bs-whatever="@mdo">
+    <i class="fa-solid fa-plus"></i>
+    </button>
+	
+
+	<!-- Modal for uploading files -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+
+      <div class="modal-content">
+
+        <!-- Heading of Modal -->
+
+        <div class="modal-header">
+
+          <h1 class="modal-title fs-5" id="uploadModalLabel"><img src="/AnytimeFileAccess/src/assets/imges/upload.png" alt="UploadIcon"
+              style="width: 22px; height: 22px" />&nbsp;&nbsp;File Upload</h1>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+
+        <!-- Body of Modal contains Form  -->
+
+        <div class="modal-body">
+
+          <!-- Form Of File Details  action="../AnytimeFileAccess/UploadFileServlet" -->
+          <form method="post"   id="uploadFileFORM" enctype='multipart/form-data'>
+
+            <div class="mb-3">
+
+              <!-- 1) Select file -->
+              <label for="formFile" class="form-label">Select document</label>
+              <input class="form-control" type="file" id="formFile" name="fileSelected"
+                accept="image/*, application/pdf" required>
+
+            </div>
+
+            
+              <!-- 2) Choose Category -->
+            <div class="mb-3">
+
+              <label for="category-select" class="form-label">Category</label>
+
+              <select class="form-select" id="category-select" name="category">
+                <option value="Personal">Personal</option>
+                <option value="Government">Government</option>
+                <option value="Office">Office</option>
+                <option value="Education">Education</option>
+                <option value="Health">Health</option>
+                <option value="Finance">Finance</option>
+                <option value="Other">Other</option>
+              </select>
+
+              <!-- 2.1) If "other" chosen -->
+              <div id="other-category" class="form-floating d-none">
+
+                <input type="text" class="form-control" id="other-category-input" name="otherCategory" placeholder="Specify category">
+                <label for="other-category-input">Specify category</label>
+
+              </div>
+
+            </div>
+
+            <!-- 3) Choose Expiary date if Available -->
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="expiry-checkbox">
+              <label class="form-check-label" for="expiry-checkbox">Add Expiry Date</label>
+            </div>
+
+            <!-- 3.1) Only if checkbox is checked -->
+            <div class="mb-3 d-none" id="expiry-date">
+              <label for="expiry-date-input" class="form-label">Expiry Date</label>
+              <input type="date" class="form-control" id="expiry-date-input" name="expiryDate">
+            </div>
+
+            <div class="mb-3">
+              <label for="description-input" class="form-label">Description</label>
+              <textarea class="form-control" id="description-input" name="desc" placeholder="Enter a description..." required></textarea>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+
+          </form>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 	<!-- Link to Bootstrap JS -->
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js"></script>
 
-<!-- <script>
-    window.history.pushState(null, "", window.location.href);
-</script> -->
 
+  <script>
+
+  /* Upload Button submitted */
+  
+  $(document).ready(function() {
+	  
+  $("#uploadFileFORM").submit(function(event) {
+	  
+    event.preventDefault(); // Prevent default form submission
+
+    $.ajax({
+      url: "../AnytimeFileAccess/UploadFileServlet",
+      type: "POST",
+      data: new FormData(this),
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        console.log("Response : " , response); // Log the response from the server
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown); // Log the error message
+      }
+    });
+  
+    // Reload Page 
+    location.reload(true);
+    
+  });
+  
+});
+
+
+    /* If user select "other" , Textfiled open */
+    const categorySelect = document.querySelector('#category-select');
+    const otherCategory = document.querySelector('#other-category');
+
+    categorySelect.addEventListener('change', () => {
+      if (categorySelect.value === 'Other') {
+        otherCategory.classList.remove('d-none');
+        otherCategory.querySelector('input').setAttribute('required', '');
+      } else {
+        otherCategory.classList.add('d-none');
+        otherCategory.querySelector('input').removeAttribute('required');
+      }
+    });
+
+    /* If there is an Expiray date(Checkbox is checked) then and then date is visible */
+    const expiryCheckbox = document.querySelector('#expiry-checkbox');
+    const expiryDate = document.querySelector('#expiry-date');
+
+    expiryCheckbox.addEventListener('change', () => {
+      if (expiryCheckbox.checked) {
+        expiryDate.classList.remove('d-none');
+        expiryDate.querySelector('input').setAttribute('required', '');
+      } else {
+        expiryDate.classList.add('d-none');
+        expiryDate.querySelector('input').removeAttribute('required');
+      }
+    });
+
+  </script>
+  
 </body>
 
 </html>
