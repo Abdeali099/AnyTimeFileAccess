@@ -487,7 +487,7 @@ text-decoration:none;
 
         <div class="modal-header">
 
-          <h1 class="modal-title fs-5" id="uploadModalLabel"><img src="/AnytimeFileAccess/src/assets/imges/upload.png" alt="UploadIcon"
+          <h1 class="modal-title fs-5" id="uploadModalLabel"><img src="https://res.cloudinary.com/footprints23/image/upload/v1682371987/upload_tfuey7.png" alt="UploadIcon"
               style="width: 22px; height: 22px" />&nbsp;&nbsp;File Upload</h1>
 
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -592,15 +592,16 @@ text-decoration:none;
       contentType: false,
       success: function(response) {
         console.log("Response : " , response); // Log the response from the server
+
+        // Reload Page 
+        location.reload(true);
+        
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log(errorThrown); // Log the error message
       }
     });
   
-    // Reload Page 
-    location.reload(true);
-    
   });
   
 });

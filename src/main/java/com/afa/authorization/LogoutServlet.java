@@ -43,11 +43,17 @@ public class LogoutServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		session.setAttribute("afa_username",null);
-	
+		
+		
+		  response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		  response.setHeader("Pragma", "no-cache");
+		   response.setHeader("Expires", "0");
+		 
+		
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
         requestDispatcher.forward(request, response);
 		
-        // session.invalidate(); !!! Not Working !!!
+         session.invalidate(); // !!! Not Working !!!
         
 		/* Redirect to Login Page  : I should use this but It is not working*/
 		//response.sendRedirect("http://localhost:8090/AnytimeFileAccess/Login.jsp");

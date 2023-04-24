@@ -97,13 +97,15 @@ public class UploadFileServlet extends HttpServlet {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			 uploadedDate = formatter.format(date);
 			
-		    System.out.println(" 1) " + fileName);
-		    System.out.println(" 2) " +fileSize);
-			System.out.println(" 3) " +category);
-			System.out.println(" 4) " +otherCategory);
-			System.out.println(" 5) " +description);
-			System.out.println(" 6) " +expiryDate);
-			System.out.println(" 7) " +uploadedDate);
+				/*
+				 * System.out.println(" 1) " + fileName); 
+				 * System.out.println(" 2) " +fileSize);
+				 * System.out.println(" 3) " +category); 
+				 * System.out.println(" 4) " +otherCategory); 
+				 * System.out.println(" 5) " +description);
+				 * System.out.println(" 6) " +expiryDate); 
+				 * System.out.println(" 7) " +uploadedDate);
+				 */
 			
 			/* Saving File to cloudinary */
 			
@@ -221,7 +223,7 @@ public class UploadFileServlet extends HttpServlet {
 		preparedStatement.setString(3,fileSize);
 		
 		 
-		 if (category.equals("other")) {
+		 if (category.equalsIgnoreCase("Other")) {
 			 preparedStatement.setString(4,otherCategory);
 		}
 		 else {
