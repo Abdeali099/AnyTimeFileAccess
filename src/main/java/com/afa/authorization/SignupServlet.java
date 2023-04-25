@@ -1,9 +1,18 @@
 package com.afa.authorization;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -82,6 +91,19 @@ public class SignupServlet extends HttpServlet {
                     psForEmailValidation.close();
                     rsForEmailValidation.close();
 
+                    /* <--- Sending Confirmation Email  ---> */
+                   
+                    String PORT=""+request.getServerPort();
+                    boolean isMailSent=sendConfirmationMail(userName,userEmail,PORT);
+                    
+                    if (!isMailSent) {
+						/* Mail is not sent : Mail is not proper */
+                    	 request.setAttribute("status", "invalidMail");
+                         requestDispatcher = request.getRequestDispatcher("Signup.jsp");
+                         requestDispatcher.forward(request, response);
+                         return;
+					}
+                    
                     /* <--- Details are Store to database ---> */
 
                     String queryForStoreData = "insert into user_details values (?,?,?,?) ;";
@@ -174,4 +196,53 @@ public class SignupServlet extends HttpServlet {
         }
 
     }
+
+	private boolean sendConfirmationMail(String userName, String userEmail,String PORT) {
+		
+			/* Setting AFA credential */
+			final String afa_email_id = "anytimefileaccess@gmail.com";
+	        final String afa_email_password = "mmnhywyvyaewzvbt";
+	        
+	        /* Set up the properties for the email server : Gmail server */
+	        Properties props = new Properties();
+	        props.put("mail.smtp.host", "smtp.gmail.com");
+	        props.put("mail.smtp.port", "587");
+	        props.put("mail.smtp.auth", "true");
+	        props.put("mail.smtp.starttls.enable", "true");
+
+	        try {
+	         
+	        /* Authinticate AFA with credential and create session */
+	        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+	            protected PasswordAuthentication getPasswordAuthentication() {
+	                return new PasswordAuthentication(afa_email_id, afa_email_password);
+	            }
+	        });
+
+        	
+	        /* Creating Meassage to send via Mail */
+	      	InetAddress inetAddress = InetAddress.getLocalHost();
+        	String IP_Of_Client=inetAddress.getHostAddress();
+     
+	        String URL="http://"+IP_Of_Client+":"+PORT+"/AnytimeFileAccess/Login.jsp";
+	        
+	        Message message = new MimeMessage(session);
+	        message.setFrom(new InternetAddress(afa_email_id));
+	        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail));
+	        message.setSubject("AFA account created successfully");
+	        message.setText("Hello " + userName 
+	        		+ "\n !! Welome to Anytime File Access !!"
+	        		+ "\n => Your account  created successfully , Now you can access your documents from anywhere anytime."
+	        		+ "\n Login here : "
+	        		+ URL);
+	         
+	        Transport.send(message);
+ 	        
+        }catch (Exception e) {
+			System.out.println("\n => Error in sending confirmation mail : " + e);
+			return false;
+		}
+		
+		return true;
+	}
 }

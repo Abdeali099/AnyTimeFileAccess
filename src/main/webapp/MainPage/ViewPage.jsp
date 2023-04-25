@@ -271,7 +271,7 @@ text-decoration:none;
 				<i class="fa-solid fa-user"></i> 
 				<span class="me-3" id="user_name"> <%=loggedInUserName %> </span> 
 				
-				<a href="http://localhost:8090/AnytimeFileAccess/LogoutServlet" style="text-decoration:none">
+				<a href="../AnytimeFileAccess/LogoutServlet" style="text-decoration:none">
 				<i id="logout_icon" class="fa-solid fa-right-from-bracket"></i>
 				</a>
 				
