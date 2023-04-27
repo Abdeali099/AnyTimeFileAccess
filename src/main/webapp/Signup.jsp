@@ -141,6 +141,12 @@
   	{
   		swal("Error 404", "Details are not proper", "error");
   	}
+	
+
+  	if(status == "invalidMail")
+  	{
+  		swal("Error 404", "Invalid E-mail id", "error");
+  	}
   	
   	if(status == "databaseError"){
   		swal("Error 500", "Internal server error", "error");
