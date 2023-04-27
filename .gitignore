@@ -1,2 +1,5 @@
 /build/
 src/assets/credential.props
+/.classpath
+/.settings/
+/.project

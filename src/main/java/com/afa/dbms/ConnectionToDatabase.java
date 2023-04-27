@@ -43,8 +43,8 @@ public class ConnectionToDatabase {
 		/* Fetching Data from credential.props */
 		
 		try {
-
-			String path = "E:\\AJT_Project\\AnytimeFileAccess\\src\\assets\\credential.props";
+			//Might generat Error
+			String path = "D:\\AnytimeFileAccess\\src\\assets\\credential.props";
 			
 			/* Problem : No getting context path, it works on absolte path which will differ
 			 * for all so need to change !!
@@ -72,6 +72,7 @@ public class ConnectionToDatabase {
 			
 		} catch (Exception exception) {
 			System.out.println("=> Error at Creating connection : " + exception);
+			System.out.println("Edit your own Path for credentials in ConnectionToDatabase");
 		}
 		
 		

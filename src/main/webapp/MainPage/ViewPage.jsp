@@ -7,9 +7,9 @@
 <%@page import="java.sql.Statement"%>
 <%@page import="com.afa.dbms.ConnectionToDatabase"%>
 <%@page import="java.sql.Connection"%>
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+	
 
 <!-- If user is Not Logged in send back it to login page -->
 
@@ -132,6 +132,7 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AnyTimeFileAcees | Main </title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
 
 <!-- Link to Bootstrap CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
@@ -372,9 +373,9 @@ text-decoration:none;
 			%>
 				<!-- End JSP : 2 -->
 
-			<div class="col">
+			<div class="col" id="card<%=previewId %>">
 
-				<div class="card">
+				<div class="card" >
 
 				<!-- Start JSP : 3 -->
 				
@@ -426,7 +427,7 @@ text-decoration:none;
 								&nbsp; Download
 							</a>
 
-							<button id=<%=previewId %> class="btn btn-outline-primary" type="button">
+							<button id=<%=previewId %> class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#Modal<%=previewId%>"type="button">
 								<i class="fa-solid fa-circle-info"></i>Details
 							</button>
 
@@ -439,13 +440,91 @@ text-decoration:none;
 			</div>
 
 	<!-- Start JSP : 6 -->
-
+	
 	<%
-				}
+				}//For Loop closed for inserting cards
+				
+				
+				for(int i=0;i<collectionOfFileData.size();i++){
+					/* Getting Object */
+					fileDataModal=collectionOfFileData.get(i);
+					
+				/* Varible to show in Grid/Preview */	
+				String modalFileId="",modalFileName="",modalFileCategory="",modalFileSize="",modalFileDesc="",modalFileCreatedDate="",modalFileModifiedDate="",
+								modalFileExpiryDate="";
+				
+				/* Getting all preview Data */		
+				modalFileId = ""+fileDataModal.getFileId(); 
+				modalFileName=fileDataModal.getFileName();
+				modalFileCategory=fileDataModal.getCategoryOfFile();
+				modalFileSize=fileDataModal.getFileSize();
+				modalFileDesc=fileDataModal.getDescOfFile();
+				modalFileCreatedDate=fileDataModal.getDateCreated();
+				modalFileModifiedDate=fileDataModal.getDateModified();
+				modalFileExpiryDate=fileDataModal.getDateExpiray();
+				
+				%>
+				 <div class="modal fade detail-modal" id="Modal<%=modalFileId %>"  tabindex="-1" role="dialog" aria-labelledby="<%=modalFileId+"ModalLabel" %>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                    <button type="button" class="close close-modal" data-bs-dismiss="modal"  aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                <form id="form<%=modalFileId %>">
+                  <div class="modal-body">
+                  
+                    <div class="form-group">
+                      <label for="file-name">File Name</label>
+                      <input type="text" class="form-control changable"  id="file-name<%=modalFileId %>" value="<%=modalFileName%>"disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="file-desc">File Description</label>
+                      <input type="text" class="form-control changable"  id="file-desc<%=modalFileId %>" value="<%=modalFileDesc %>"disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="file-type">File Category</label>
+                      <input type="text" class="form-control changable" id="file-type<%=modalFileId %>" value="<%= modalFileCategory%>"disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="file-size">Size</label>
+                      <input type="text" class="form-control" id="file-size<%=modalFileId %>" value="<%=modalFileSize %>"disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="created-date">Created On</label>
+                      <input type="date" class="form-control "  id="created-date<%=modalFileId%>" value="<%=modalFileCreatedDate %>"disabled>
+                    </div>
+                   
+                    <div class="form-group">
+                      <label for="modified-date">Last Modified</label>
+                      <input type="date" class="form-control "  id="modified-date<%=modalFileId%>"  value="<%= modalFileModifiedDate%>"disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="expiry-date">Expiry Date</label>
+                      <input type="date" class="form-control changable"  id="expiry-date<%=modalFileId %>" value="<%= modalFileExpiryDate%>"disabled>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success update-buttons" id="<%=modalFileId%>">Update</button>
+                    
+               <!--       <button type="button" class="btn btn-warning" id="reset-button">Reset to Default</button>-->
+                    <button type="button" class="btn btn-danger delete-buttons" id="<%=modalFileId%>">Delete</button>
+                    <button type="button" class="btn btn-secondary close-modal"  data-toggle="modal" data-bs-dismiss="modal">Close</button>
+                  </div>
+            </form>
+            </div>
+        </div>            
+    </div>	
+				
+				<% 
+				}//For loop closed for inserting modal for each card
 				
 		} /* else closed : show data in grid */
-
-	} catch (Exception exception) {
+			}
+			catch (Exception exception) {
 		System.out.println("\n => Error at  Grid : " + exception);
 	}
 
@@ -603,6 +682,123 @@ text-decoration:none;
     });
   
   });
+  
+  //JQuery for Detail Modal Part -->Pranay Part
+  $(".update-buttons").each(function() {
+	  
+	  $(this).on("click", function() {
+		    //Enabling editing
+		    if ($(this).text() == "Update") {
+		      $(".changable").prop("disabled", false);
+		      //Changing button text
+		      $(this).text("Save");
+		    }
+		    else{
+		    	event.preventDefault();
+		    	var modalId=$(this).attr('id');
+		    	var nameField='#file-name'+modalId;
+		    	var descField="#file-desc"+modalId;
+		    	var typeField='#file-type'+modalId;
+		    	var expiryField='#expiry-date'+modalId;
+		    	var form_data = {
+		    				'file-id':modalId,
+		    		      'file-name': $(nameField).val(),
+		    		      'file-desc':$(descField).val(),
+		    		      'file-type': $(typeField).val(),
+		    		      'expiry-date': $(expiryField).val(),
+		    		      // add more form fields here
+		    		    };
+
+		    	
+		    	
+		    	//var form_data = new FormData("#form1");  // get form data
+		    	console.log(form_data);
+		    	
+		    	console.log(modalId);
+		    	(function($) {
+		    		  // your code that uses $.ajax() goes here
+		    		$.ajax({
+			            type: 'POST',
+			            url: 'updatedetails', // servlet url
+			            data: form_data,
+			            success: function(){
+			              alert('Data Updated Sucesfully');
+			              $('#Modal'+modalId).modal('hide'); // hide modal after submission
+			              
+			              //$('#myForm')[0].reset(); // reset form
+			              
+			            }
+			          });
+		    		})(jQuery);
+		          
+		    	
+		    }
+		  });
+		});
+  
+  //For Delete Button
+  
+  $(".delete-buttons").each(function() {
+	  
+	  $(this).on("click", function() {
+		  var result = confirm("Are you sure you want to delete?");
+		    if (result) {
+		    	
+		    	event.preventDefault();
+		    	console.log("Clicked Yes");
+		    	//Getting id for DB
+		    	var modalId=$(this).attr('id');
+		    	var cardId="#card"+modalId;
+		    	var nameField='#file-name'+modalId;
+		    	var fileName=$(nameField).val();
+		    	console.log(fileName);
+		    	var form_data = {
+	    				'file-id':modalId,
+	    		    
+	    		      // add more form fields here
+	    		    };
+				console.log(form_data);
+		    	
+		    	console.log(modalId);
+		    	(function($) {
+		    		  // your code that uses $.ajax() goes here
+		    		$.ajax({
+			            type: 'POST',
+			            url: 'deletefile', // servlet url
+			            data: form_data,
+			            success: function(){
+			              alert('File '+fileName+' Removed Sucessfully !');
+			            	$(cardId).hide();//Hidin the deletd card
+			            //  $('#Modal'+modalId).attr("aria-hidden",true); // hide modal after submission
+			            	$(".close-modal").click();
+			            //  $('#card'+modalId).hide();
+			              //$('#myForm')[0].reset(); // reset form
+			              
+			            }
+			          });
+		    		})(jQuery);
+
+		    	
+		      // Code to execute if "Yes" button is clicked
+		    } else {
+		      
+		      // Code to execute if "No" button is clicked
+		    }
+	  });
+	});
+  
+  //Changing fields to uneditable and update button text on closing modal
+  //TODO to add prompt on closing modal
+  $('.detail-modal').on('hidden.bs.modal', function (e) {
+	  
+	  if (!confirm('Make sure you have saved changes before closing it')) {
+		    e.preventDefault(); // Prevent the modal from closing
+		    return false;
+		  }
+	  // Your code to be executed when the modal is closed goes here
+	  $(".changable").prop("disabled", true);
+	 $(".update-buttons").text("Update");
+	});
   
 });
 

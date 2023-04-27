@@ -148,7 +148,8 @@ public class UploadFileServlet extends HttpServlet {
 			inputStream.read(data);
 
 			/* This refer to server path (used temporary) */
-			String myPath = request.getRealPath("/") + fileName;
+//			String myPath = request.getRealPath("/") + fileName;
+			String myPath = "E:\\Java Trash" + fileName;
 
 			System.out.println("Path : " + myPath);
 

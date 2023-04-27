@@ -28,4 +28,20 @@
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/LoginServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<servlet-name>ForUpdatingDetail</servlet-name>
+  	<servlet-class>com.afa.crud.UpdateFileDetail</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ForUpdatingDetail</servlet-name>
+  	<url-pattern>/updatedetails</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>ForDeletingFile</servlet-name>
+  	<servlet-class>com.afa.crud.DeleteFile</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ForDeletingFile</servlet-name>
+  	<url-pattern>/deletefile</url-pattern>
+  </servlet-mapping>
 </web-app>
