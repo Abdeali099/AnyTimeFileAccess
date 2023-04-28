@@ -43,15 +43,9 @@ public class ConnectionToDatabase {
 		/* Fetching Data from credential.props */
 		
 		try {
-			//Might generat Error
-			String path = "D:\\AnytimeFileAccess\\src\\assets\\credential.props";
-			
-			/* Problem : No getting context path, it works on absolte path which will differ
-			 * for all so need to change !!
-			 * 
-			 *  File file=new File("E:\\AJT_Project\\AnytimeFileAccess\\src\\assets\\credential.props");
-			System.out.println(file.getAbsolutePath());
-			System.out.println(file.getPath()); */
+			/* Set path According to your System */
+//			 String path = "D:\\AnytimeFileAccess\\src\\assets\\credential.props"; // -> Pranay
+			String path ="E:\\AJT_Project\\AnytimeFileAccess\\src\\assets\\credential.props"; // -> Abdeali
 			
 			FileInputStream fis = new FileInputStream(path);
 			Properties prop = new Properties();

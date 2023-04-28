@@ -56,6 +56,7 @@ public class LoginServlet extends HttpServlet {
                 request.setAttribute("status", "databaseError");
                 requestDispatcher = request.getRequestDispatcher("Login.jsp");
                 requestDispatcher.forward(request, response);
+                return; 
             }
 
             else {
@@ -76,6 +77,7 @@ public class LoginServlet extends HttpServlet {
                     request.setAttribute("status", "failed");
                     requestDispatcher = request.getRequestDispatcher("Login.jsp");
                     requestDispatcher.forward(request, response);
+                    return; 
                 }
 
                 /* <-- User exist !!! --> */
@@ -108,6 +110,7 @@ public class LoginServlet extends HttpServlet {
 					 */
                     requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
                     requestDispatcher.forward(request, response);
+                    return; 
 
                 }
 
@@ -132,6 +135,7 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("status", "failed");
             requestDispatcher = request.getRequestDispatcher("Login.jsp");
             requestDispatcher.forward(request, response);
+            return; 
 
         } finally {
 

@@ -61,6 +61,7 @@ public class SignupServlet extends HttpServlet {
                 request.setAttribute("status", "databaseError");
                 requestDispatcher = request.getRequestDispatcher("Signup.jsp");
                 requestDispatcher.forward(request, response);
+                return; 
             }
 
             else {
@@ -83,6 +84,7 @@ public class SignupServlet extends HttpServlet {
                     request.setAttribute("status", "failed");
                     requestDispatcher = request.getRequestDispatcher("Signup.jsp");
                     requestDispatcher.forward(request, response);
+                    return; 
                 }
 
                 /* <-- True new user--> */
@@ -132,6 +134,7 @@ public class SignupServlet extends HttpServlet {
                         request.setAttribute("status", "success");  */
                         requestDispatcher = request.getRequestDispatcher(".\\MainPage\\ViewPage.jsp");
                         requestDispatcher.forward(request, response);
+                        return; 
                         
                     }
 
@@ -147,6 +150,7 @@ public class SignupServlet extends HttpServlet {
                         request.setAttribute("status", "failed");
                         requestDispatcher = request.getRequestDispatcher("Signup.jsp");
                         requestDispatcher.forward(request, response);
+                        return; 
 
                     }
 
@@ -172,6 +176,7 @@ public class SignupServlet extends HttpServlet {
             request.setAttribute("status", "failed");
             requestDispatcher = request.getRequestDispatcher("Signup.jsp");
             requestDispatcher.forward(request, response);
+            return; 
 
         } finally {
 

@@ -132,7 +132,9 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AnyTimeFileAcees | Main </title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+  
+<link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/footprints23/image/upload/v1682663184/Favicon_AFA_zou4qm.png">
+
 
 <!-- Link to Bootstrap CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
@@ -142,10 +144,6 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
 
 <!-- Link to Jquery JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
-<!-- Link to Sweet Alert  -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
-
 
 </head>
 
@@ -202,8 +200,23 @@ String loggedInUserName=(String)session.getAttribute("afa_username");
     font-size: 2rem;
     line-height: 2.7rem;
     border-color: steelblue;
+    transition:all 0.3s;
 }
 
+.fixed-button :hover{
+background-color: #255487;
+    width: 3rem;
+    height: 3rem;
+      position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    color: #fff;
+    text-align: center;
+    font-size: 2rem;
+    line-height: 2.7rem;
+    border-color: steelblue;
+    transition:all 0.3s;
+}
 
 /* My Css */
 
@@ -245,7 +258,17 @@ text-decoration:none;
     padding: 20px;
   }
 }
+.card {
+    margin-bottom: 1rem;
+    border: 1px solid black;
+    box-shadow: 3px 3px 1px #4c4848;
+}
 
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px dotted black;
+}
 
 </style>
 
@@ -264,10 +287,13 @@ text-decoration:none;
 
 			<span class="navbar-brand">
 			<!-- Here add mini Image / logo Of AFA  -->
-			<i class="fa-solid fa-circle-h"></i>
-				&nbsp; AnyTimeFileAcees
-			</span>
+			
+<img style="width: 86px;height: 62px;" src="https://res.cloudinary.com/footprints23/image/upload/v1682659756/Afa-Logo-2_vf3anl.png" alt="Afa-Logo" id="logo_AFA" />
+			
+			 <span> AnyTimeFileAcees </span>
 
+		</span>
+		
 			<div class="navbar-text ms-auto">
 				<i class="fa-solid fa-user"></i> 
 				<span class="me-3" id="user_name"> <%=loggedInUserName %> </span> 
@@ -362,10 +388,11 @@ text-decoration:none;
 					fileDataModal=collectionOfFileData.get(i);
 					
 				/* Varible to show in Grid/Preview */	
-				String previewId="",previewUrl="",previewFileName="",previewFileDesc="";
+				String previewId="",previewCategory="",previewUrl="",previewFileName="",previewFileDesc="";
 				
 				/* Getting all preview Data */		
-				 previewId = ""+fileDataModal.getFileId(); 
+				 previewId = ""+fileDataModal.getFileId();
+				 previewCategory=fileDataModal.getCategoryOfFile();
 				 previewUrl = fileDataModal.getUrlOfFile();
 				 previewFileName = fileDataModal.getFileName();
 				 previewFileDesc = fileDataModal.getDescOfFile();
@@ -411,9 +438,16 @@ text-decoration:none;
 					%>
 		<!-- End JSP : 5 -->
 
-					<div class="card-body">
+				<div class="card-body">
 
-						<h5 class="card-title"><%=previewFileName %></h5>
+                          
+					<div class="d-flex justify-content-between">
+
+          				 <h5 class="card-title"><%=previewFileName %></h5>
+
+          				 <span class="badge rounded-pill bg-success" style="padding: 10px;"><%=previewCategory %></span>
+
+        			</div>    
 
 						<p class="card-text"><%=previewFileDesc %></p>
 
@@ -577,8 +611,8 @@ text-decoration:none;
 
         <div class="modal-body">
 
-          <!-- Form Of File Details  action="../AnytimeFileAccess/UploadFileServlet" -->
-          <form method="post"   id="uploadFileFORM" enctype='multipart/form-data'>
+          <!-- Form Of File Details  -->
+          <form method="post"  id="uploadFileFORM" enctype='multipart/form-data'>
 
             <div class="mb-3">
 
@@ -639,6 +673,13 @@ text-decoration:none;
 
           </form>
 
+	      <!-- Spinner/Loader  -->
+
+			<div style="margin-top: 10px; display: none;text-align:center" id="uploadSpinner">
+  				<div class="spinner-border m-5 text-primary" style="width: 4rem; height: 4rem;" role="status">
+    			<span class="visually-hidden">Loading...</span>
+  				</div>
+			</div>
 
         </div>
 
@@ -662,6 +703,10 @@ text-decoration:none;
   $("#uploadFileFORM").submit(function(event) {
 	  
     event.preventDefault(); // Prevent default form submission
+    
+    /* Showing Spinner */
+    $("#uploadSpinner").show();
+	$("#uploadFileFORM").hide();
 
     $.ajax({
       url: "../AnytimeFileAccess/UploadFileServlet",
@@ -672,9 +717,16 @@ text-decoration:none;
       success: function(response) {
         console.log("Response : " , response); // Log the response from the server
 
-        // Reload Page 
-        location.reload(true);
+        /* Hiding Spinner */
+        $("#uploadSpinner").hide();
         
+        /* Showing Alert */
+ 
+        /* Reload Page : After 0.5 second */
+        setTimeout(() => {
+            location.reload(true);
+            }, 500);
+
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log(errorThrown); // Log the error message
@@ -727,6 +779,9 @@ text-decoration:none;
 			              
 			              //$('#myForm')[0].reset(); // reset form
 			              
+			              /* Reload Page */
+						  location.reload(true);
+			              
 			            }
 			          });
 		    		})(jQuery);
@@ -773,6 +828,11 @@ text-decoration:none;
 			            	$(".close-modal").click();
 			            //  $('#card'+modalId).hide();
 			              //$('#myForm')[0].reset(); // reset form
+			              
+			              
+			            	/* Reload Page */
+							  location.reload(true);
+				              
 			              
 			            }
 			          });
