@@ -290,7 +290,7 @@ text-decoration:none;
 			
 <img style="width: 86px;height: 62px;" src="https://res.cloudinary.com/footprints23/image/upload/v1682659756/Afa-Logo-2_vf3anl.png" alt="Afa-Logo" id="logo_AFA" />
 			
-			 <span> AnyTimeFileAcees </span>
+			 <span> AnyTimeFileAccess </span>
 
 		</span>
 		
